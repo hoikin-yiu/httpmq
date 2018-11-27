@@ -20,9 +20,9 @@ python3.6 server.py
 ```
 
 #### put data into a queue
-url: /queue/
-method: PUT
-json param:
+- url: /queue/
+- method: PUT
+- json param:
 
 field |    type   | require | remark
 ------|-----------|---------|------
@@ -42,10 +42,10 @@ response:
 }
 ```
 
-#### GET data from a queue
-url: /queue/
-method: GET
-query param:
+#### get data from a queue
+- url: /queue/
+- method: GET
+- query param:
 
 field |    type   | require | remark
 ------|-----------|---------|------
@@ -64,10 +64,10 @@ response:
 }
 ```
   
-#### View status of a queue
-url: /status/
-method: GET
-query param:
+#### view status of a queue
+- url: /status/
+- method: GET
+- query param:
 
 field |    type   | require | remark
 ------|-----------|---------|------
@@ -91,10 +91,10 @@ response:
 }
 ```
   
-#### View a position of queue
-url: /view/
-method: GET
-query param:
+#### view a position of queue
+- url: /view/
+- method: GET
+- query param:
 
 field    |  type  | require | remark
 ---------|--------|---------|------
@@ -114,10 +114,10 @@ response:
 }
 ```
 
-#### Reset queue
-url: /reset/
-method: GET
-query param:
+#### reset a queue
+- url: /reset/
+- method: GET
+- query param:
 
 field |    type   | require | remark
 ------|-----------|---------|------
