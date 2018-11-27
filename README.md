@@ -9,13 +9,17 @@ The httpmq is a simple HTTP message queue service written in Python based on Tor
 * 5 Queue status view.
 * 6 Be able to view the contents of the specified position.
 
-### usage
-          python3.6 server.py
-          --profile set profile to run.Default profile is develop.\n
-		  --port set port to listen. Default port is 8200.\n
-		  --daemon set main process as a daemon.Default value is true.\n
+### Usage
+```bash
+python3.6 server.py
+```
+```
+--profile set profile to run.Default profile is develop.\n
+--port set port to listen. Default port is 8200.\n
+--daemon set main process as a daemon.Default value is false.\n
+```
 
-* 1 put data into a queue
+#### put data into a queue
 url: /queue/
 method: PUT
 json param:
@@ -38,7 +42,7 @@ response:
 }
 ```
 
-* 2 GET data from a queue
+#### GET data from a queue
 url: /queue/
 method: GET
 query param:
@@ -60,7 +64,7 @@ response:
 }
 ```
   
-* 3 View status of a queue
+#### View status of a queue
 url: /status/
 method: GET
 query param:
@@ -87,7 +91,7 @@ response:
 }
 ```
   
-* 4 View a position of queue
+#### View a position of queue
 url: /view/
 method: GET
 query param:
@@ -110,7 +114,7 @@ response:
 }
 ```
 
-* 5 Reset queue
+#### Reset queue
 url: /reset/
 method: GET
 query param:
