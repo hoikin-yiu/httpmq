@@ -2,12 +2,12 @@
 The httpmq is a simple HTTP message queue service written in Python based on Tornado and Redis.
 
 ### Feature
-* 1 Fast and simple.
-* 2 Asynchronous I/O.
-* 3 Multiple queue.
-* 4 Low memory consumption.
-* 5 Queue status view.
-* 6 Be able to view the contents of the specified position.
+*  Fast and simple.
+*  Asynchronous I/O.
+*  Multiple queue.
+*  Low memory consumption.
+*  Queue status view.
+*  Queue position view.
 
 ### Usage
 ```bash
