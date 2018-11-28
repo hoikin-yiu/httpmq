@@ -6,14 +6,16 @@ import tornado
 from exceptions import (
     EmptyQueueException, FullQueueException, InvalidPositionException
 )
+from .base import Queue
 
 settings = tornado.settings
 cache = aredis.StrictRedis(
     host=settings.REDIS_HOST, port=settings.REDIS_PORT
 )
+__all__ = ["RedisQueue"]
 
 
-class RedisQueue:
+class RedisQueue(Queue):
     _cache = cache
 
     def __init__(self, name):
@@ -29,7 +31,7 @@ class RedisQueue:
         data = json.loads(data) if data else None
         return data
 
-    async def set(self, data):
+    async def put(self, data):
         try:
             pos = await self._put_pos()
         except FullQueueException:
