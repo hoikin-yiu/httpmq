@@ -7,7 +7,7 @@ import response
 from exceptions import (
     EmptyQueueException, FullQueueException, InvalidPositionException
 )
-from models.queue import RedisQueue as Queue
+from queues import RedisQueue as Queue
 from .base import APIHandler
 
 settings = tornado.settings
@@ -38,7 +38,7 @@ class QueueHandler(APIHandler):
 
         queue = Queue(name)
         try:
-            await queue.set(data)
+            await queue.put(data)
         except FullQueueException:
             return self.response(response.Fail(message="HTTPMQ_FULL"))
         return self.response(response.SUCCESS(message="HTTPMQ_PUT_OK"))
