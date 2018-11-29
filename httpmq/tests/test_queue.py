@@ -46,12 +46,12 @@ class QueueTestCase(BaseTestCase):
         self.assertIn(b"HTTPMQ_RESET_OK", response.body)
 
     def test_status(self):
+        self.test_queue_put()
         url = f"/status/?name={self.test_name}"
         response = self.fetch(url)
         self.assertIn(b"HTTPMQ_SUCCEED", response.body)
 
     def test_view(self):
-        self.test_queue_put()
         url = f"/view/?name={self.test_name}&position=0"
         response = self.fetch(url)
         self.assertIn(b"HTTPMQ_SUCCEED", response.body)
