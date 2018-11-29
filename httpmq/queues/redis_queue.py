@@ -4,7 +4,8 @@ import aredis
 import tornado
 
 from exceptions import (
-    EmptyQueueException, FullQueueException, InvalidPositionException
+    EmptyQueueException, FullQueueException, InvalidPositionException,
+    QueueNotExistsException
 )
 from .base import Queue
 
@@ -28,8 +29,9 @@ class RedisQueue(Queue):
             raise
         key = f"{self.name}:{pos}"
         data = await self._cache.get(key)
-        data = json.loads(data) if data else None
-        return data
+        if data is None:
+            raise QueueNotExistsException()
+        return json.loads(data)
 
     async def put(self, data):
         try:
@@ -48,7 +50,7 @@ class RedisQueue(Queue):
             else:
                 unread = put_pos
         else:
-            unread = None
+            raise QueueNotExistsException()
         return {
             "name": self.name,
             "put_pos": put_pos,
@@ -73,15 +75,16 @@ class RedisQueue(Queue):
                 if position >= put_pos:
                     raise InvalidPositionException()
         else:
-            raise InvalidPositionException()
+            raise QueueNotExistsException()
 
         key = f"{self.name}:{position}"
         data = await self._cache.get(key)
-        data = json.loads(data) if data else None
-        return data
+        return json.loads(data)
 
     async def reset(self):
         keys = await self._cache.keys(f"{self.name}:*")
+        if not keys:
+            raise QueueNotExistsException()
         for key in keys:
             await self._cache.delete(key.decode())
         await self._cache.save()

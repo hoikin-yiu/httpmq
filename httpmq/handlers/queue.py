@@ -5,7 +5,8 @@ import tornado
 
 import response
 from exceptions import (
-    EmptyQueueException, FullQueueException, InvalidPositionException
+    EmptyQueueException, FullQueueException, InvalidPositionException,
+    QueueNotExistsException
 )
 from queues import RedisQueue as Queue
 from .base import APIHandler
@@ -24,6 +25,8 @@ class QueueHandler(APIHandler):
             data = await queue.get()
         except EmptyQueueException:
             return self.response(response.Fail(message="HTTPMQ_EMPTY"))
+        except QueueNotExistsException:
+            return self.response(response.Fail(message="HTTPMQ_NOT_EXISTS"))
         return self.response(response.SUCCESS(data=data))
 
     async def put(self, **kwargs):
@@ -51,7 +54,10 @@ class ResetHandler(APIHandler):
             return self.response(response.ParamError())
 
         queue = Queue(name)
-        await queue.reset()
+        try:
+            await queue.reset()
+        except QueueNotExistsException:
+            return self.response(response.Fail(message="HTTPMQ_NOT_EXISTS"))
         return self.response(response.SUCCESS(message="HTTPMQ_RESET_OK"))
 
 
@@ -75,6 +81,8 @@ class ViewHandler(APIHandler):
             return self.response(response.Fail())
         except EmptyQueueException:
             return self.response(response.Fail(message="HTTPMQ_EMPTY"))
+        except QueueNotExistsException:
+            return self.response(response.Fail(message="HTTPMQ_NOT_EXISTS"))
         return self.response(response.SUCCESS(data=data))
 
 
@@ -85,5 +93,8 @@ class StatusHandler(APIHandler):
             return self.response(response.ParamError())
 
         queue = Queue(name)
-        data = await queue.status()
+        try:
+            data = await queue.status()
+        except QueueNotExistsException:
+            return self.response(response.Fail(message="HTTPMQ_NOT_EXISTS"))
         return self.response(response.SUCCESS(data=data))
