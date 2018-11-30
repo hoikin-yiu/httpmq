@@ -19,8 +19,9 @@ __all__ = ["RedisQueue"]
 class RedisQueue(Queue):
     _cache = cache
 
-    def __init__(self, name):
+    def __init__(self, name, length=settings.DEFAULT_MAX_QUEUE_NUM):
         self.name = name
+        self.length = min([length, settings.DEFAULT_MAX_QUEUE_NUM])
 
     async def get(self):
         try:
@@ -96,7 +97,7 @@ class RedisQueue(Queue):
         async with await self._cache.pipeline() as pipe:
             while True:
                 try:
-                    await pipe.watch(get_pos_key)
+                    await pipe.watch(get_pos_key, put_pos_key)
                     current_get_pos = await pipe.get(get_pos_key)
                     current_get_pos = int(current_get_pos.decode()) \
                         if current_get_pos else None
@@ -111,7 +112,7 @@ class RedisQueue(Queue):
                     elif current_get_pos == current_put_pos:
                         # current_put_pos is always empty
                         raise EmptyQueueException()
-                    if current_get_pos == settings.DEFAULT_MAX_QUEUE_NUM:
+                    if current_get_pos == self.length:
                         next_get_pos = 0
                     else:
                         next_get_pos = current_get_pos + 1
@@ -132,7 +133,7 @@ class RedisQueue(Queue):
         async with await self._cache.pipeline() as pipe:
             while True:
                 try:
-                    await pipe.watch(put_pos_key)
+                    await pipe.watch(get_pos_key, put_pos_key)
                     current_put_pos = await pipe.get(put_pos_key)
                     current_put_pos = int(current_put_pos.decode()) \
                         if current_put_pos else None
@@ -142,7 +143,7 @@ class RedisQueue(Queue):
                     if current_put_pos is None:
                         # init
                         current_put_pos = 0
-                    elif current_put_pos == settings.DEFAULT_MAX_QUEUE_NUM:
+                    elif current_put_pos == self.length:
                         if not current_get_pos:
                             raise FullQueueException()
                         else:
