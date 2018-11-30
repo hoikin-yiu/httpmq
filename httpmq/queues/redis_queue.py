@@ -10,6 +10,7 @@ from exceptions import (
 from .base import Queue
 
 settings = tornado.settings
+DEFAULT_MAX_QUEUE_NUM = settings.DEFAULT_MAX_QUEUE_NUM
 cache = aredis.StrictRedis(
     host=settings.REDIS_HOST, port=settings.REDIS_PORT
 )
@@ -19,9 +20,11 @@ __all__ = ["RedisQueue"]
 class RedisQueue(Queue):
     _cache = cache
 
-    def __init__(self, name, length=settings.DEFAULT_MAX_QUEUE_NUM):
+    def __init__(self, name, length=DEFAULT_MAX_QUEUE_NUM):
         self.name = name
-        self.length = min([length, settings.DEFAULT_MAX_QUEUE_NUM])
+        self.length = min([
+            max([length, DEFAULT_MAX_QUEUE_NUM]), DEFAULT_MAX_QUEUE_NUM
+        ])
 
     async def get(self):
         try:
